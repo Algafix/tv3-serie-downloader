@@ -6,9 +6,11 @@ import requests
 import json
 
 ############### GLOBAL VARIABLES ###############
-SERIES_ID = "66256"
+SERIES_ID = "66256"  # Ranma
+#SERIES_ID = "120086583"  # Detectiu Conan
 SERIES_URL = f"https://api.ccma.cat/videos?version=2.0&_format=json&items_pagina=20&programatv_id={SERIES_ID}"
-EPISODE_URL = "https://api-media.ccma.cat/pvideo/media.jsp?idint="
+EPISODE_URL = "https://api-media.ccma.cat/pvideo/media.jsp?idint={}"
+RESOLUTION = "720p"
 HEADERS = { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:105.0) Gecko/20100101 Firefox/105.0'}
 
 ############### LOAD DOWNLOADED EPISODES ###############
@@ -17,7 +19,7 @@ with open("episodes.json","r") as openfile:
     capitols_descarregats = json.load(openfile)
 
 ############### GENERATE LISTS OF EPISODES ###############
-response = requests.request("GET", SERIES_URL, headers=HEADERS)
+response = requests.get(SERIES_URL, headers=HEADERS)
 json_res = response.json()
 capitols = json_res["resposta"]["items"]["item"]
 
@@ -32,11 +34,24 @@ for capitol in capitols:
 ############### DOWNLOAD MISSING EPISODES ###############
 for capitol in llista_capitols:
     if capitol not in capitols_descarregats:
+
         print(f"Descarregant capitol {capitol['numero']}: {capitol['titol']}.")
-        response = requests.request("GET", EPISODE_URL + str(capitol["id"]), headers=HEADERS)
+        response = requests.get(EPISODE_URL.format(capitol["id"]), headers=HEADERS)
         json_res = response.json()
-        link = json_res["media"]["url"][1]["file"]
-        response = requests.request("GET", link, headers=HEADERS)
+        urls = json_res["media"]["url"]
+
+        link = None
+        possible_resolutions = []
+        for url in urls:
+            possible_resolutions.append(url["label"])
+            if url['label'] == RESOLUTION:
+                link = url['file']
+        if link is None:
+            print(f"Resolucio no disponible.")
+            print(f"Possibles resolucions: {possible_resolutions}")
+            exit(1)
+        
+        response = requests.get(link, headers=HEADERS)
         open(str(capitol["numero"]) + ". " + capitol["titol"] + ".mp4", 'wb').write(response.content)
         capitols_descarregats.append(capitol)
 
