@@ -28,7 +28,7 @@ for capitol in capitols:
     llista_capitols.append({
         "id" : capitol["id"], 
         "numero" : capitol["capitol"], 
-        "titol" : capitol["permatitle"]
+        "titol" : capitol["permatitle"].replace(':','').replace('?','')
         })
 
 ############### DOWNLOAD MISSING EPISODES ###############
