@@ -8,7 +8,7 @@ import json
 ############### GLOBAL VARIABLES ###############
 SERIES_ID = "66256"  # Ranma
 #SERIES_ID = "120086583"  # Detectiu Conan
-SERIES_URL = f"https://api.ccma.cat/videos?version=2.0&_format=json&items_pagina=20&programatv_id={SERIES_ID}"
+SERIES_URL = f"https://api.ccma.cat/videos?version=2.0&_format=json&items_pagina=40&programatv_id={SERIES_ID}"
 EPISODE_URL = "https://api-media.ccma.cat/pvideo/media.jsp?idint={}"
 RESOLUTION = "720p"
 HEADERS = { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:105.0) Gecko/20100101 Firefox/105.0'}
